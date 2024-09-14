@@ -2,12 +2,11 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import Lasso
 import joblib
 
 # Tải mô hình và encoder
-model = joblib.load('lasso_model.pkl')
-label_encoder = joblib.load('label_encoder_lasso.pkl')
+model = joblib.load('linear_model.pkl')
+label_encoder = joblib.load('label_encoder_linear.pkl')
 
 # Nhập dữ liệu từ bàn phím và dự đoán
 def predict_sleep_disorder():
@@ -29,9 +28,11 @@ def predict_sleep_disorder():
     # Dự đoán
     prediction = model.predict(df)
     
-    # Chuyển đổi dự đoán về nhãn văn bản
-    prediction = label_encoder.inverse_transform([int(round(prediction[0]))])
+    # Chuyển đổi dự đoán thành nhãn
+    prediction_rounded = round(prediction[0])
+    prediction_rounded = min(max(0, prediction_rounded), len(label_encoder.classes_) - 1)
+    prediction_label = label_encoder.inverse_transform([prediction_rounded])
     
-    print(f"Predicted Sleep Disorder: {prediction[0]}")
+    print(f"Predicted Sleep Disorder: {prediction_label[0]}")
 
 predict_sleep_disorder()
