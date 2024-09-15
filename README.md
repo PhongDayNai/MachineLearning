@@ -1,3 +1,10 @@
+# HỌC MÁY CƠ BẢN
+*Những mô hình học máy cơ bản xây dựng bởi sinh viên CNTT Trường Đại học Thuỷ lợi*
+
+*Đề tài: Xây dựng mô hình học máy về dự đoán chứng rối loạn giấc ngủ dựa vào điểu kiện thể chất và thói quen sống của con người.*
+
+---
+
 ## Phương pháp Neural Network
 
 ### Thư viện cần thiết
@@ -395,3 +402,15 @@ if __name__ == '__main__':
 ```
   + Kiểm tra `__name__`:
     + `if __name__ == '__main__'`: đảm bảo rằng hàm `predict()` chỉ được gọi khi script được chạy trực tiếp, không phải khi nó được nhập vào như một mô-đun trong một chương trình khác.
+
+### Hướng dẫn thực thi mô hình
+---
+Sau khi đã cài đặt đủ thư viện, hãy gộp tất cả các file vào chung một folder. Mở Terminal hoặc Command Prompt và đi đến nơi chứa thư mục. 
+
+Để huấn luyện mô hình, nhập lệnh:
+
+`python  train_model_neural_network.py`
+
+Sau khi đã huấn luyện, để nhập chạy chương trình dự đoán, nhập lệnh:
+
+`python predict_neural_network.py`
