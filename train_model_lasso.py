@@ -69,5 +69,5 @@ plt.tight_layout()
 plt.show()
 
 # Lưu mô hình và encoder
-joblib.dump(model, 'lasso_model.pkl')
+joblib.dump(model, 'model_lasso.pkl')
 joblib.dump(label_encoder, 'label_encoder_lasso.pkl')
