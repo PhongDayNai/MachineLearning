@@ -23,7 +23,7 @@ def get_input():
     quality_of_sleep = int(input('Quality of Sleep: '))
     physical_activity_level = int(input('Physical Activity Level: '))
     stress_level = int(input('Stress Level: '))
-    bmi_category = input('BMI Category (Overweight/Normal/Obese): ')
+    bmi_category = input('BMI Category (Normal/Overweight/Obese): ')
     blood_pressure = input('Blood Pressure (e.g., 120/80): ')
     heart_rate = int(input('Heart Rate: '))
     daily_steps = int(input('Daily Steps: '))
