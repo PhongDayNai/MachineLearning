@@ -34,7 +34,6 @@
 
 #### Chuyển biến phân loại (categorical variables) thành biến số (numeric variables)
 + *Biến phân loại (Categorical variables) là những biến mà giá trị của chúng thuộc về một tập hợp các danh mục hoặc nhóm rời rạc. Các biến phân loại không có thứ tự hoặc khoảng cách cụ thể giữa các giá trị của chúng. Chúng thường được sử dụng để đại diện cho các nhóm hoặc loại khác nhau. ** Ví dụ: Gender (Nam, Nữ), Yes/No (Có, Không); Occupation (Engineer/Doctor/...)...*
-
 + *Biến số (Numeric variables) là những biến mà giá trị của chúng có thể đo lường và có thứ tự hoặc khoảng cách cụ thể giữa các giá trị. Biến số thường đại diện cho các số thực hoặc số nguyên và có thể được sử dụng trong các phép toán toán học. ** Ví dụ: Age (25, 26, 27, 30, 35...), Sleep_Duration (1, 2, 3, 4, 5...)...*
 
 ```
