@@ -84,4 +84,4 @@ plt.title('Model Loss')
 plt.show()
 
 # Lưu mô hình
-model.save('model_nn.h5')
+model.save('model_neural_network.h5')
