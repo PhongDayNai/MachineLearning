@@ -4,7 +4,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from keras.models import load_model
 
 # Tải mô hình
-model = load_model('model_nn.h5')
+model = load_model('model_neural_network.h5')
 
 # Tải các label encoder
 label_encoders = {
