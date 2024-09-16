@@ -410,7 +410,7 @@ Sau khi đã cài đặt đủ thư viện, hãy gộp tất cả các file vào
 
 Để huấn luyện mô hình, nhập lệnh:
 
-`python  train_model_neural_network.py`
+`python train_model_neural_network.py`
 
 Sau khi đã huấn luyện, để nhập chạy chương trình dự đoán, nhập lệnh:
 
