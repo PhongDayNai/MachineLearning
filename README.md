@@ -83,6 +83,7 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 + `train_test_split` từ `sklearn.model_selection` được dùng để chia dữ liệu thành các tập huấn luyện, kiểm tra và validation.
 + `test_size=0.4` nghĩa là 40% dữ liệu sẽ được chia cho tập kiểm tra tạm thời (`X_temp` và `y_temp`), và 60% dữ liệu sẽ được giữ lại cho tập huấn luyện (`X_train` và `y_train`).
 + Tiếp theo, dữ liệu trong `X_temp` và `y_temp` được chia đôi để tạo ra tập validation và tập kiểm tra cuối cùng (`X_val`, `X_test`, `y_val`, `y_test`), mỗi tập sẽ chiếm 50% của dữ liệu tạm thời.
++ `random_state=42` giữ cho quá trình chia dữ liệu có thể tái lập được.
 
 #### Tiền xử lý dữ liệu thêm: Chuẩn hóa dữ liệu
 ```
