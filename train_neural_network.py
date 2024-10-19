@@ -11,19 +11,18 @@ from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 import seaborn as sns
 import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense
+from tensorflow.python.keras.utils.np_utils import to_categorical
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.utils import to_categorical
+
 
 # Đọc file CSV
 data = pd.read_csv('sleep_data.csv')
-
-if 'Person ID' in data.columns:
-    data = data.drop('Person ID', axis=1)
-
-print(data.head())
-print(data.info())
 
 # Điền giá trị thiếu của cột 'Sleep Disorder' bằng mode
 data['Sleep Disorder'].fillna(data['Sleep Disorder'].mode()[0], inplace=True)

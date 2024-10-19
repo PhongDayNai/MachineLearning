@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
+import pickle
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.linear_model import Lasso
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.linear_model import LinearRegression, Lasso
+from tensorflow import keras
 from sklearn.preprocessing import StandardScaler, PowerTransformer, LabelEncoder
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 import pickle
 
-# Đọc file CSV
+# 1. Tải dữ liệu
 data = pd.read_csv('sleep_data.csv')
 
 # Điền giá trị thiếu của cột 'Sleep Disorder' bằng mode
@@ -127,83 +128,69 @@ if 'Person ID' in data.columns:
     data = data.drop('Person ID', axis=1)
 
 # Tách dữ liệu thành các đặc trưng (features) và nhãn (target)
+if 'Person ID' in data.columns:
+    data = data.drop('Person ID', axis=1)
+
 X = data.drop('Sleep Disorder', axis=1)  # Loại bỏ cột Sleep Disorder khỏi các đặc trưng
 y = data['Sleep Disorder']  # Cột Sleep Disorder làm nhãn
 
-# Chia dữ liệu thành tập huấn luyện, tập xác thực và tập kiểm tra
+# Chia dữ liệu thành tập huấn luyện, xác thực và tập kiểm tra
 X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)
 X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-# Khởi tạo mô hình hồi quy tuyến tính
-lasso_model = Lasso(alpha=0.021)
+# 2. Tải LabelEncoders và các mô hình đã huấn luyện
+with open('label_encoders_linear.pkl', 'rb') as file:
+    label_encoders_linear = pickle.load(file)
 
-# Huấn luyện mô hình trên dữ liệu train
-lasso_model.fit(X_train, y_train)
+with open('label_encoders_lasso.pkl', 'rb') as file:
+    label_encoders_lasso = pickle.load(file)
 
-# Dự đoán trên tập train, validation, và test
-y_train_pred = lasso_model.predict(X_train)
-y_validation_pred = lasso_model.predict(X_val)
-y_test_pred = lasso_model.predict(X_test)
+with open('model_linear.pkl', 'rb') as file:
+    model_linear = pickle.load(file)
 
-# Đánh giá trên tập train
-r2_train, rmse_train, nse_train, mae_train = evaluate_model(y_train, y_train_pred)
+with open('model_lasso.pkl', 'rb') as file:
+    model_lasso = pickle.load(file)
 
-# Đánh giá trên tập validation
-r2_val, rmse_val, nse_val, mae_val = evaluate_model(y_val, y_validation_pred)
+model_neural_network = keras.models.load_model('model_neural_network.h5')
 
-# Đánh giá trên tập test
-r2_test, rmse_test, nse_test, mae_test = evaluate_model(y_test, y_test_pred)
+# 3. Dự đoán giá trị bằng các mô hình
+y_train_linear_pred = model_linear.predict(X_train)
+y_train_lasso_pred = model_lasso.predict(X_train)
+y_train_nn_pred = model_neural_network.predict(X_train)
 
-# Tạo DataFrame để hiển thị kết quả
-results = {
-    'Metric': ['LassoRegression-R²', 'LassoRegression-RMSE', 'LassoRegression-NSE', 'LassoRegression-MAE'],
-    'Train': [r2_train, rmse_train, nse_train, mae_train],
-    'Validation': [r2_val, rmse_val, nse_val, mae_val],
-    'Test': [r2_test, rmse_test, nse_test, mae_test]
-}
+y_val_linear_pred = model_linear.predict(X_val)
+y_val_lasso_pred = model_lasso.predict(X_val)
+y_val_nn_pred = model_neural_network.predict(X_val)
 
-results_df = pd.DataFrame(results)
+y_test_linear_pred = model_linear.predict(X_test)
+y_test_lasso_pred = model_lasso.predict(X_test)
+y_test_nn_pred = model_neural_network.predict(X_test)
 
-# Hiển thị DataFrame
-print(results_df)
+# 4. Tạo tập dữ liệu mới từ các dự đoán
+X_train_stacking = np.column_stack((y_train_linear_pred, y_train_lasso_pred, y_train_nn_pred))
+X_val_stacking = np.column_stack((y_val_linear_pred, y_val_lasso_pred, y_val_nn_pred))
+X_test_stacking = np.column_stack((y_test_linear_pred, y_test_lasso_pred, y_test_nn_pred))
 
-# Hàm để vẽ đường cong parabol từ dữ liệu thực và dự đoán
-def plot_parabola(x, y_true, y_pred, title):
-    # Fit đường parabol cho cả giá trị thực và dự đoán
-    poly_true = np.poly1d(np.polyfit(x, y_true, 2))  # Bậc 2 (parabol)
-    poly_pred = np.poly1d(np.polyfit(x, y_pred, 2))
+# 5. Huấn luyện mô hình stacking
+stacked_model = LinearRegression()
+stacked_model.fit(X_train_stacking, y_train)
 
-    # Tạo dải giá trị x để vẽ đường parabol mượt mà hơn
-    x_smooth = np.linspace(x.min(), x.max(), 500)
+# 6. Dự đoán và đánh giá mô hình stacking
+y_val_stacking_pred = stacked_model.predict(X_val_stacking)
+y_test_stacking_pred = stacked_model.predict(X_test_stacking)
 
-    # Vẽ đồ thị
-    plt.figure(figsize=(12, 6))
-    plt.plot(x_smooth, poly_true(x_smooth), label='True Values (Parabola)', color='blue')
-    plt.plot(x_smooth, poly_pred(x_smooth), label='Predicted Values (Parabola)', color='orange')
-    plt.legend()
-    plt.xlabel('Sample Index')
-    plt.ylabel('Price')
-    plt.title(title)
-    plt.show()
+r2_val_stacking = r2_score(y_val, y_val_stacking_pred)
+rmse_val_stacking = np.sqrt(mean_squared_error(y_val, y_val_stacking_pred))
 
-# Tạo chỉ số cho từng tập dữ liệu
-x_train_range = np.arange(len(y_train))
-x_val_range = np.arange(len(y_val))
-x_test_range = np.arange(len(y_test))
+r2_test_stacking = r2_score(y_test, y_test_stacking_pred)
+rmse_test_stacking = np.sqrt(mean_squared_error(y_test, y_test_stacking_pred))
 
-# Vẽ đồ thị parabol cho tập train
-plot_parabola(x_train_range, y_train, y_train_pred, 'Train Set: True vs Predicted Values (Parabola)')
+# 7. Hiển thị kết quả
+print(f'Validation R²: {r2_val_stacking}')
+print(f'Validation RMSE: {rmse_val_stacking}')
+print(f'Test R²: {r2_test_stacking}')
+print(f'Test RMSE: {rmse_test_stacking}')
 
-# Vẽ đồ thị parabol cho tập validation
-plot_parabola(x_val_range, y_val, y_validation_pred, 'Validation Set: True vs Predicted Values (Parabola)')
-
-# Vẽ đồ thị parabol cho tập test
-plot_parabola(x_test_range, y_test, y_test_pred, 'Test Set: True vs Predicted Values (Parabola)')
-
-# Lưu LabelEncoder
-with open('label_encoders_lasso.pkl', 'wb') as file:
-    pickle.dump(label_encoders, file)
-
-# Lưu mô hình Lasso
-with open('model_lasso.pkl', 'wb') as file:
-    pickle.dump(lasso_model, file)
+# 8. Lưu mô hình stacking
+# with open('model_stacking.pkl', 'wb') as file:
+#     pickle.dump(stacked_model, file)

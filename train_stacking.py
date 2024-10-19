@@ -25,12 +25,6 @@ import pickle
 # Đọc file CSV
 data = pd.read_csv('sleep_data.csv')
 
-if 'Person ID' in data.columns:
-    data = data.drop('Person ID', axis=1)
-
-print(data.head())
-print(data.info())
-
 # Điền giá trị thiếu của cột 'Sleep Disorder' bằng mode
 data['Sleep Disorder'].fillna(data['Sleep Disorder'].mode()[0], inplace=True)
 
