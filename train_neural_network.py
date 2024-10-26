@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler, PowerTransformer, LabelEncoder
-from sklearn.model_selection import GridSearchCV
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
@@ -89,7 +87,6 @@ X_val_scaled = scaler.transform(X_val)
 X_test_scaled = scaler.transform(X_test)
 
 model = Sequential()
-
 model.add(Dense(units=64, activation='relu', input_dim=X_train_scaled.shape[1]))
 model.add(Dense(units=32, activation='relu'))
 model.add(Dense(units=y_train_categorical.shape[1], activation='softmax'))
@@ -104,8 +101,6 @@ y_test_pred_nn = model.predict(X_test_scaled)
 y_train_pred_classes = y_train_pred_nn.argmax(axis=1)
 y_val_pred_classes = y_val_pred_nn.argmax(axis=1)
 y_test_pred_classes = y_test_pred_nn.argmax(axis=1)
-
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 train_accuracy = accuracy_score(y_train, y_train_pred_classes)
 val_accuracy = accuracy_score(y_val, y_val_pred_classes)
